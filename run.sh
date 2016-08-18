@@ -5,12 +5,12 @@
 : ${ZK_SERVICE_NAME:=zookeeper}
 
 # We do not want to override the dynamic config file.
-if [[ ! -f /zookeeper/conf/zoo_dynamic.cfg ]]; then
+if [[ ! -f /opt/zookeeper/conf/zoo_dynamic.cfg ]]; then
   for n in $(seq 1 ${ZK_NUMBER_OF_NODES}); do
-    echo "server.${n}:${ZK_SERVICE_NAME}-${n}:2888:3888:participant;2181" >> /zookeeper/conf/zoo_dynamic.cfg
+    echo "server.${n}:${ZK_SERVICE_NAME}-${n}:2888:3888;2181" >> /opt/zookeeper/conf/zoo_dynamic.cfg
   done
 fi
 
 echo ${ZK_MYID} > /data/myid
 
-exec /zookeeper/bin/zkServer.sh start-foreground /zookeeper/conf/zoo.cfg
+# exec /opt/zookeeper/bin/zkServer.sh start-foreground /opt/zookeeper/conf/zoo.cfg

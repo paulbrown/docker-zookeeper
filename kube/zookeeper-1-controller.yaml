@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: zookeeper
-          image: quay.io/ukhomeofficedigital/zookeeper:v0.0.3
+          image: paulbrown/zookeeper:latest
           imagePullPolicy: Always
           resources:
             limits:

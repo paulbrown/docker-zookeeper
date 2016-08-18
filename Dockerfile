@@ -1,17 +1,13 @@
 FROM paulbrown/base:latest
 
-RUN yum upgrade -y -q; yum clean all
-RUN yum install -y -q java-headless tar wget; yum clean all
+RUN yum upgrade -y -q
+RUN yum install -y -q java-headless
+RUN yum clean all
 
-EXPOSE 2181 2888 3888
+RUN curl http://apache.mirror.digitalpacific.com.au/zookeeper/zookeeper-3.5.2-alpha/zookeeper-3.5.2-alpha.tar.gz | tar -xzf - -C /opt
+RUN mv /opt/zookeeper-3.5.2-alpha /opt/zookeeper
 
-ENV ZK_VERSION 3.5.2-alpha
-
-RUN wget -q http://mirror.ox.ac.uk/sites/rsync.apache.org/zookeeper/zookeeper-${ZK_VERSION}/zookeeper-${ZK_VERSION}.tar.gz -O - | tar -xzf -; mv zookeeper-${ZK_VERSION} /zookeeper
-
-VOLUME /data
-WORKDIR /zookeeper
-COPY zoo.cfg /zookeeper/conf/zoo.cfg
+COPY zoo.cfg /opt/zookeeper/conf/zoo.cfg
 COPY run.sh /run.sh
 
 CMD /run.sh
