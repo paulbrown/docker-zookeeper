@@ -1,5 +1,4 @@
 # Zookeeper on Kubernetes
-[![Docker Repository on Quay](https://quay.io/repository/ukhomeofficedigital/zookeeper/status "Docker Repository on Quay")](https://quay.io/repository/ukhomeofficedigital/zookeeper)
 
 Bits you need to run Zookeeper cluster on Kubernetes. It is based on Zookeeper
 version 3.5.x which is currently in alpha, but it's been pretty stable.
