@@ -1,4 +1,4 @@
-FROM centos:latest
+FROM paulbrown/base:latest
 
 RUN yum upgrade -y -q; yum clean all
 RUN yum install -y -q java-headless tar wget; yum clean all
