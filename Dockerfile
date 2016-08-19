@@ -14,8 +14,6 @@ EXPOSE 2181 2888 3888
 
 COPY zoo.cfg /opt/zookeeper/conf/zoo.cfg
 
-COPY run.sh /run.sh
-
-RUN chmod +x /run.sh
-
 VOLUME /data
+
+
