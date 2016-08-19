@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: zookeeper
-          image: paulbrown/zookeeper:latest
+          image: docker.io/paulbrown/zookeeper:latest
           imagePullPolicy: Always
           resources:
             limits:
