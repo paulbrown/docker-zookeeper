@@ -1,16 +1,15 @@
 #!/bin/bash
 
-: ${ZK_MYID:=1}
-: ${ZK_NUMBER_OF_NODES:=1}
-: ${ZK_SERVICE_NAME:=zookeeper}
+HOSTNAME=$(hostname)
+LENGTH=${#HOSTNAME}
+POS=`expr index "$HOSTNAME" -`
 
-# We do not want to override the dynamic config file.
-if [[ ! -f /opt/zookeeper/conf/zoo_dynamic.cfg ]]; then
-  for n in $(seq 1 ${ZK_NUMBER_OF_NODES}); do
-    echo "server.${n}=${ZK_SERVICE_NAME}-${n}:2888:3888;2181" >> /opt/zookeeper/conf/zoo_dynamic.cfg
-  done
-fi
+MYID=${HOSTNAME:POS:LENGTH-POS}
 
-echo ${ZK_MYID} > /data/myid
+exec /opt/zookeeper/bin/zkServer-initialize.sh --force
 
-exec /opt/zookeeper/bin/zkServer.sh start-foreground /opt/zookeeper/conf/zoo.cfg
+echo "MYID" >> /data/myid
+echo "server.$MYID=$HOSTNAME:2888:3888:observer;2181" >> /opt/zookeeper/conf/zoo_dynamic.cfg
+
+exec /opt/zookeeper/bin/zkServer.sh start /opt/zookeeper/conf/zoo.cfg
+exec /opt/zookeeper/bin/zkCli.sh reconfig -add "server.$MYID=$HOSTNAME:2888:3888:participant;2181"

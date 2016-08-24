@@ -12,8 +12,14 @@ RUN mv /opt/zookeeper-3.5.2-alpha /opt/zookeeper
 
 EXPOSE 2181 2888 3888
 
+VOLUME /data
+
 COPY zoo.cfg /opt/zookeeper/conf/zoo.cfg
 
-VOLUME /data
+COPY run.sh /run.sh
+
+ENTRYPOINT /run.sh
+
+
 
 
