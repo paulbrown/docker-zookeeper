@@ -8,7 +8,7 @@ MYID=${HOSTNAME:POS:LENGTH-POS}
 
 exec /opt/zookeeper/bin/zkServer-initialize.sh --force
 
-echo "MYID" >> /data/myid
+echo "$MYID" >> /data/myid
 echo "server.$MYID=$HOSTNAME:2888:3888:observer;2181" >> /opt/zookeeper/conf/zoo_dynamic.cfg
 
 exec /opt/zookeeper/bin/zkServer.sh start /opt/zookeeper/conf/zoo.cfg
