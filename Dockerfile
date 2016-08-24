@@ -18,6 +18,8 @@ COPY zoo.cfg /opt/zookeeper/conf/zoo.cfg
 
 COPY run.sh /run.sh
 
+RUN chmod +x /run.sh
+
 ENTRYPOINT /run.sh
 
 
