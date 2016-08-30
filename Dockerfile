@@ -16,7 +16,7 @@ VOLUME /data
 
 COPY onStart.sh /onStart.sh
 
-RUN chmod +x /onStart.sh
+RUN chmod +x /onStart.sh && ./onStart.sh
 
 
 
