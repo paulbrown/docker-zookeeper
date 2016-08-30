@@ -12,6 +12,8 @@ COPY zoo.cfg /opt/zookeeper/conf/zoo.cfg
 
 EXPOSE 2181 2888 3888
 
+VOLUME /data
+
 COPY onStart.sh /onStart.sh
 
 RUN chmod +x /onStart.sh
