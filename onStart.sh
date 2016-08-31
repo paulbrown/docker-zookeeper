@@ -14,4 +14,3 @@ if [ ! -f /opt/zookeeper/conf/zoo.cfg.dynamic ]; then
 fi
 
 /opt/zookeeper/bin/zkServer-initialize.sh --force --myid=${MYID}
-/opt/zookeeper/bin/zkServer.sh start /opt/zookeeper/conf/zoo.cfg
