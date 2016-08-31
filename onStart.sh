@@ -8,7 +8,7 @@ PEERS=( $(nslookup -type=srv zookeeper.default | grep -oE '[^ ]+$' | grep ^zooke
 echo ${PEERS[@]}
 
 if [ ${#PEERS[@]} -eq 1 ]; then
-  echo "server.${T_ID}=${PEERS[0]}:2888:3888:participant;2181"
+  echo "server.${T_ID}=${PEERS[0]}:2888:3888:participant;2181" >> /opt/zookeeper/conf/zoo.cfg.dynamic
 else
   for PEER in "${PEERS[@]}"
   do
@@ -16,9 +16,9 @@ else
     P_ID=$( echo ${P_HOSTNAME} | cut -d "-" -f2 | cut -d "-" -f1 )
 
     if [[ "${P_HOSTNAME}" == "${T_HOSTNAME}" ]]; then
-      echo "server.${P_ID}=${PEER}:2888:3888:observer;2181"
+      echo "server.${P_ID}=${PEER}:2888:3888:observer;2181" >> /opt/zookeeper/conf/zoo.cfg.dynamic
     else
-      echo "server.${P_ID}=${PEER}:2888:3888:participant;2181"
+      echo "server.${P_ID}=${PEER}:2888:3888:participant;2181" >> /opt/zookeeper/conf/zoo.cfg.dynamic
     fi
   done
 fi
