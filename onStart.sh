@@ -7,6 +7,10 @@ PEERS=( $(nslookup -type=srv zookeeper.default | grep -oE '[^ ]+$' | grep ^zooke
 
 echo ${PEERS[@]}
 
+if [ ${#PEERS[@]} -eq 0 ]; then
+  echo "server.${T_ID}=${T_HOSTNAME}:2888:3888:participant;2181" >> /opt/zookeeper/conf/zoo.cfg.dynamic
+fi
+
 if [ ${#PEERS[@]} -eq 1 ]; then
   echo "server.${T_ID}=${PEERS[0]}:2888:3888:participant;2181" >> /opt/zookeeper/conf/zoo.cfg.dynamic
 else
@@ -24,6 +28,6 @@ else
 fi
 
 /opt/zookeeper/bin/zkServer-initialize.sh --force --myid=${T_ID}
-# /opt/zookeeper/bin/zkServer.sh start /opt/zookeeper/conf/zoo.cfg
-# /opt/zookeeper/bin/zkCli.sh reconfig -add "server.${T_ID}=${T_HOSTNAME}:2888:3888:participant;2181"
-# /opt/zookeeper/bin/zkServer.sh stop
+/opt/zookeeper/bin/zkServer.sh start /opt/zookeeper/conf/zoo.cfg
+/opt/zookeeper/bin/zkCli.sh reconfig -add "server.${T_ID}=${T_HOSTNAME}:2888:3888:participant;2181"
+/opt/zookeeper/bin/zkServer.sh stop
