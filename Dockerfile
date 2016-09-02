@@ -18,6 +18,5 @@ COPY onStart.sh /onStart.sh
 
 ENTRYPOINT ["/onStart.sh"]
 
-
-
+CMD ["/opt/zookeeper/bin/zkServer.sh","start-foreground","/opt/zookeeper/conf/zoo.cfg"]
 
