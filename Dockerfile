@@ -8,13 +8,17 @@ RUN curl --silent --show-error http://apache.mirror.digitalpacific.com.au/zookee
 
 RUN mv /opt/zookeeper-3.5.2-alpha /opt/zookeeper
 
-COPY zoo.cfg /opt/zookeeper/conf/zoo.cfg
-
 EXPOSE 2181 2888 3888
 
 VOLUME /data
 
+COPY zoo.cfg /opt/zookeeper/conf/zoo.cfg
+
 COPY onStart.sh /onStart.sh
+
+ENTRYPOINT ["/onStart.sh"]
+
+CMD ["/opt/zookeeper/bin/zkServer.sh","start-foreground", "/opt/zookeeper/conf/zoo.cfg"]
 
 
 
