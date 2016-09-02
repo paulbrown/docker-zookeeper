@@ -20,3 +20,4 @@ else
 fi
 
 /opt/zookeeper/bin/zkServer-initialize.sh --force --myid=${T_ID}
+/opt/zookeeper/bin/zkServer.sh start-foreground /opt/zookeeper/conf/zoo.cfg
