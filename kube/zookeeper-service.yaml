@@ -1,14 +1,17 @@
----
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
   name: zookeeper
   labels:
-    name: zookeeper
     service: zookeeper
 spec:
   ports:
-    - name: client
-      port: 2181
+    - name: peer
+      port: 2888
+    - name: leader-election
+      port: 3888
+  clusterIP: None
   selector:
-    service: zookeeper
+    app: zookeeper

@@ -1,67 +1,89 @@
-# Zookeeper on Kubernetes
+# Zookeeper on Kubernetes using a Pet Set
 
-Bits you need to run Zookeeper cluster on Kubernetes. It is based on Zookeeper
-version 3.5.x which is currently in alpha, but it's been pretty stable.
+These are the things you need to run Zookeeper cluster on Kubernetes. 
+It's based on Zookeeper version 3.5.x which is currently in alpha, 
+but it's been pretty stable to date.
 
 
 ### Deployment
-By default, if you don't specify any parameters, zookeeper will start in
-standalone mode.
+
+This example has been deployed and tested using a local Minikube setup.
+
+Minikube is a tool that makes it easy to run Kubernetes locally. Minikube 
+runs a single-node Kubernetes cluster inside a VM on your laptop for users 
+looking to try out Kubernetes or develop with it day-to-day.
+
+Minikube packages and configures a Linux VM, Docker and all Kubernetes 
+components, optimized for local development. Minikube supports Kubernetes 
+features such as:
+- DNS
+- NodePorts
+- ConfigMaps and Secrets
+- Dashboards
 
 Deploying onto a Kubernetes cluster is fairly easy. There are example
-kubernetes controller and service files in [kube/](kube/) directory.
+kubernetes Service and Pet Set files in the [kube/](kube/) directory.
 
-In the service yaml files, you will notice that we asked for static
-`ClusterIP`, in this example case, we're using `10.200.0.0/16` service IP
-range. It is very likely that your estate is configured to use different
-service IP range, so be sure you set the right IPs.
+A Pet Set is a group of stateful pods that require a stronger notion 
+of identity. The goal of Pet Set is to decouple this dependency by assigning
+identities to individual instances of an application that are not anchored 
+to the underlying physical infrastructure. 
 
-Zookeeper itself relies on the following DNS names for find its peers:
-- `zookeeper-1`
-- `zookeeper-2`
-- `zookeeper-3`
+A Pet Set requires there be {0..N-1} Pets. Each Pet has a deterministic name
+(PetSetName-Ordinal), and a unique identity. Each Pet has at most one pod, 
+and each Pet Set has at most one Pet with a given identity.
+
+A Pet Set ensures that a specified number of “pets” with unique identities 
+are running at any given time. The identity of a Pet is comprised of:
+- a stable hostname, available in DNS
+- an ordinal index
+- stable storage: linked to the ordinal & hostname
+
+Clustered software like Zookeeper suits itself well for a Pet Set 
+as it relies on stable DNS names for discovery of peers for a quorum.
+
+Please read Kubernetes Reference Documentation [here] 
+(http://kubernetes.io/docs/user-guide/petset/) 
+regarding limitations for the Pet Set alpha release.
 
 
-#### Deploy Services
-There is no strict ordering how you deploy the resources, let's start with
-services first:
+#### Deploy Persistent Volumes
+
+Pet Sets require the backing of some persistent storage. This command creates 
+some storage volumes for each of the “pets”. Normally persistent volumes 
+would be provisioned automatically in your cloud environment, however here we're just 
+using local HostPath directories. 
+
+```bash
+$ kubectl create -f kube/zookeeper-volumes.yaml
+```
+
+
+#### Deploy Service
+Each Pet Set must expose a headless service.
 
 ```bash
 $ kubectl create -f kube/zookeeper-service.yaml
-$ kubectl create -f kube/zookeeper-1-service.yaml
-$ kubectl create -f kube/zookeeper-2-service.yaml
-$ kubectl create -f kube/zookeeper-3-service.yaml
 ```
 
-Let's list the services. There are four services, `zookeeper` service is
-pointing to all zookeeper instances - for clients to use. The rest are pointing
-to each relevant zookeeper pod.
+
+#### Deploy Pet Set
+This command will create a Pet Set with 3 replicas.
 
 ```bash
-$ kubectl get services
-NAME          CLUSTER_IP       EXTERNAL_IP   PORT(S)                      SELECTOR                          AGE
-zookeeper     10.200.143.219   <none>        2181/TCP                     service=zookeeper                 4h
-zookeeper-1   10.200.10.31     <none>        2181/TCP,2888/TCP,3888/TCP   name=zookeeper-1,zookeeper_id=1   23h
-zookeeper-2   10.200.10.32     <none>        2181/TCP,2888/TCP,3888/TCP   name=zookeeper-2,zookeeper_id=2   23h
-zookeeper-3   10.200.10.33     <none>        2181/TCP,2888/TCP,3888/TCP   name=zookeeper-3,zookeeper_id=3   23h
+$ kubectl create -f kube/zookeeper-petset.yaml
 ```
 
 
-#### Deploy Replication Controllers
-
-```
-$ kubectl create -f kube/zookeeper-1-controller.yaml
-$ kubectl create -f kube/zookeeper-2-controller.yaml
-$ kubectl create -f kube/zookeeper-3-controller.yaml
-```
+#### List the Pods
 
 Get the pods:
 ```
 $ kubectl get pods
-NAME                READY     STATUS    RESTARTS   AGE
-zookeeper-1-w3u4g   1/1       Running   0          9m
-zookeeper-2-kpwaj   1/1       Running   0          9m
-zookeeper-3-vcl94   1/1       Running   0          9m
+NAME          READY     STATUS    RESTARTS   AGE
+zookeeper-1   1/1       Running   0          9m
+zookeeper-2   1/1       Running   0          8m
+zookeeper-3   1/1       Running   0          7m
 ```
 
 #### Test the Cluster
@@ -71,9 +93,9 @@ key to `bar`, then kill the Pod and try to get `/foo` from another zookeeper
 instance:
 
 ```bash
-$ kubectl exec -ti zookeeper-1-w3u4g bash
+$ kubectl exec -ti zookeeper-1 bash
 
-[root@zookeeper-1-w3u4g zookeeper]# bin/zkCli.sh
+[root@zookeeper-1]# /opt/zookeeper/bin/zkCli.sh
 [zk: localhost:2181(CONNECTED) 1] create /foo bar
 Created /foo
 [zk: localhost:2181(CONNECTED) 2] get /foo
@@ -81,20 +103,31 @@ bar
 ```
 
 Delete the pod we just used to set the `/foo` value:
-```
-$ kubectl delete zookeeper-1-w3u4g
-$ kubectl exec -ti zookeeper-3-vcl94 bash
 
-[root@zookeeper-3-vcl94 zookeeper]# bin/zkCli.sh
+```
+$ kubectl delete zookeeper-1
+$ kubectl exec -ti zookeeper-2 bash
+
+[root@zookeeper-2]# /opt/zookeeper/bin/zkCli.sh
+[zk: localhost:2181(CONNECTED) 0] get /foo
+bar
+```
+
+Check that zookeeper-1 has come back up and contains `/foo` value:
+
+```
+$ kubectl exec -ti zookeeper-1 bash
+
+[root@zookeeper-2]# /opt/zookeeper/bin/zkCli.sh
 [zk: localhost:2181(CONNECTED) 0] get /foo
 bar
 ```
 
 This just shows that if one node dies, the cluster is still functioning and the
-deleted pod will be re-created by the replication controller.
+deleted pod will be re-created by the Pet Set with a consistent 
+reliable naming convention.
 
 ### Known Caveats
 
-By default there is no data persistence. So be aware that if you delete more
-than one replication controller or more than one pod, you will lose the quorum.
+So be aware that if you delete more than one pet (pod), you will lose the quorum.
 
