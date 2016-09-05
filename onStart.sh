@@ -11,7 +11,7 @@ for PEER in "${PEERS[@]}"
 do
   P_HOSTNAME=$( echo ${PEER} | cut -d "." -f1 )
   P_ID=$( echo ${P_HOSTNAME} | cut -d "-" -f2 | cut -d "-" -f1 )
-  if [ "${T_HOSTNAME}" == "${P_HOSTNAME}"; then
+  if [ "${T_HOSTNAME}" == "${P_HOSTNAME}" ]; then
     T_CONFIG="server.${P_ID}=${PEER}:2888:3888:participant;2181"
   else
     echo "server.${P_ID}=${PEER}:2888:3888:participant;2181" >> /opt/zookeeper/conf/zoo.cfg.dynamic
