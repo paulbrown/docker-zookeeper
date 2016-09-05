@@ -21,7 +21,7 @@ else
   for PEER in "${PEERS[@]}"
   do
     S_HOSTNAME=$( echo ${PEER} | cut -d "." -f1 )
-    S_ID=$( echo ${P_HOSTNAME} | cut -d "-" -f2 | cut -d "-" -f1 )
+    S_ID=$( echo ${S_HOSTNAME} | cut -d "-" -f2 | cut -d "-" -f1 )
 
     if [ "${T_HOSTNAME}" == "${S_HOSTNAME}" ]; then
       /opt/zookeeper/bin/zkServer-initialize.sh --force --myid=${S_ID}
