@@ -18,4 +18,4 @@ done
 /opt/zookeeper/bin/zkServer.sh start /opt/zookeeper/conf/zoo.cfg
 /opt/zookeeper/bin/zkCli.sh reconfig -file /opt/zookeeper/conf/zoo.cfg.dynamic quit
 /opt/zookeeper/bin/zkServer.sh stop
-/opt/zookeeper/bin/zkServer.sh start-foreground /opt/zookeeper/conf/zoo.cfg
+exec /opt/zookeeper/bin/zkServer.sh start-foreground /opt/zookeeper/conf/zoo.cfg

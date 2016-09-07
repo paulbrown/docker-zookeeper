@@ -12,6 +12,8 @@ spec:
       port: 2888
     - name: leader-election
       port: 3888
+    - name: client
+      port: 2181
   clusterIP: None
   selector:
     app: zookeeper
