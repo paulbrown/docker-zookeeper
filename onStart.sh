@@ -3,6 +3,8 @@
 T_HOSTNAME=$(hostname)
 T_ID=$( echo ${T_HOSTNAME} | cut -d "-" -f2 | cut -d "-" -f1 )
 
+sleep 10
+
 PEERS=( $(nslookup -type=srv zookeeper.default | grep -oE '[^ ]+$' | grep ^zookeeper*) )
 
 echo ${PEERS[@]}
