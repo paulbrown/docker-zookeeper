@@ -18,12 +18,12 @@ do
   T_MEMBERS=${T_MEMBERS},${P_MEMBER}
 done
 
-echo ${T_MEMBERS}
 MEMBERS=${T_MEMBERS#\,}
 echo ${MEMBERS}
 
 /opt/zookeeper/bin/zkServer-initialize.sh --force --myid=${T_ID}
 /opt/zookeeper/bin/zkServer.sh start /opt/zookeeper/conf/zoo.cfg
-/opt/zookeeper/bin/zkCli.sh reconfig -members ${MEMBERS}
+/opt/zookeeper/bin/zkCli.sh reconfig -members ${MEMBERS} quit
 /opt/zookeeper/bin/zkServer.sh stop
-sleep infinity
+/opt/zookeeper/bin/zkServer.sh start-foreground /opt/zookeeper/conf/zoo.cfg
+
