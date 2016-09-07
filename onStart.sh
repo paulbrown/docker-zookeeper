@@ -14,11 +14,10 @@ do
   echo "server.${P_ID}=${PEER}:2888:3888:participant;2181" >> /opt/zookeeper/conf/zoo.cfg.dynamic
 done
 
-
-
 /opt/zookeeper/bin/zkServer-initialize.sh --force --myid=${T_ID}
-sleep infinity
-#/opt/zookeeper/bin/zkServer.sh start /opt/zookeeper/conf/zoo.cfg
+#sleep infinity
+/opt/zookeeper/bin/zkServer.sh start /opt/zookeeper/conf/zoo.cfg
 #/opt/zookeeper/bin/zkCli.sh reconfig -file /opt/zookeeper/conf/zoo.cfg.dynamic quit
-#/opt/zookeeper/bin/zkServer.sh stop
-#/opt/zookeeper/bin/zkServer.sh start-foreground /opt/zookeeper/conf/zoo.cfg
+/opt/zookeeper/bin/zkCli.sh reconfig -members "server.0=zookeeper-0.zookeeper.default.svc.cluster.local.:2888:3888:participant;2181" quit
+/opt/zookeeper/bin/zkServer.sh stop
+/opt/zookeeper/bin/zkServer.sh start-foreground /opt/zookeeper/conf/zoo.cfg
