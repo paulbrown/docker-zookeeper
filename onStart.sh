@@ -17,4 +17,4 @@ done
 /opt/zookeeper/bin/zkServer-initialize.sh --force --myid=${T_ID}
 /opt/zookeeper/bin/zkServer.sh start /opt/zookeeper/conf/zoo.cfg
 /opt/zookeeper/bin/zkCli.sh reconfig -members "server.0=zookeeper-0.zookeeper.default.svc.cluster.local.:2888:3888:participant;2181"
-
+sleep infinity
