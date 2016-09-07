@@ -15,12 +15,15 @@ do
   P_ID=$( echo ${P_HOSTNAME} | cut -d "-" -f2 | cut -d "-" -f1 )
   P_MEMBER="server.${P_ID}=${PEER}:2888:3888:participant;2181"
   echo ${P_MEMBER} >> /opt/zookeeper/conf/zoo.cfg.dynamic
-  T_MEMBERS=${T_MEMBERS#\,},${P_MEMBER}
+  T_MEMBERS=${T_MEMBERS},${P_MEMBER}
 done
 
 echo ${T_MEMBERS}
+MEMBERS=${T_MEMBERS#\,}
+echo ${MEMBERS}
 
 /opt/zookeeper/bin/zkServer-initialize.sh --force --myid=${T_ID}
 /opt/zookeeper/bin/zkServer.sh start /opt/zookeeper/conf/zoo.cfg
-/opt/zookeeper/bin/zkCli.sh reconfig -members ${T_MEMBERS}
+/opt/zookeeper/bin/zkCli.sh reconfig -members ${MEMBERS}
+/opt/zookeeper/bin/zkServer.sh stop
 sleep infinity
