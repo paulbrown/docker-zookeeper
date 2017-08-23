@@ -4,9 +4,7 @@ ENV ZK_USER=zookeeper \
 	ZK_HOME=/opt/zookeeper \
 	ZK_DATA_DIR=/var/lib/zookeeper/data \
 	ZK_DATA_LOG_DIR=/var/lib/zookeeper/log \
-	ZK_LOG_DIR=/var/log/zookeeper \
-	JAVA_HOME= /usr/bin/java \
-	PATH=$PATH:$ZK_HOME/bin
+	ZK_LOG_DIR=/var/log/zookeeper
 
 ARG ZK_DIST=zookeeper-3.5.3-beta
 
