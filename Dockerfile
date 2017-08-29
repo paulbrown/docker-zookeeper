@@ -2,10 +2,9 @@ FROM paulbrown/base:latest
 
 ENV ZK_USER=zk \
   ZK_HOME=/zk \
-  ZOO_DATADIR=/zk_data \
-  ZOO_DATALOGDIR=/zk_datalog \
-  ZOO_LOG_DIR=/zk_log \
-  ZOO_DATADIR_AUTOCREATE_DISABLE=1
+  ZK_DATADIR=/zk_data \
+  ZK_DATALOGDIR=/zk_datalog \
+  ZK_LOG_DIR=/zk_log
 
 ARG ZK_DIST=zookeeper-3.5.3-beta
 
@@ -49,8 +48,8 @@ COPY zkGenConfig.sh zkOK.sh zkMetrics.sh "$ZK_HOME/bin/"
 RUN set -o pipefail \ 
   && groupadd --gid 1000 $ZK_USER \
   && useradd --uid 1000 --gid $ZK_USER --home $ZK_HOME $ZK_USER \
-  && mkdir --parents $ZOO_DATADIR $ZOO_DATALOGDIR $ZOO_LOG_DIR \
-  && chown -R -L -h "$ZK_USER:$ZK_USER" $ZK_HOME $ZOO_DATADIR $ZOO_DATALOGDIR $ZOO_LOG_DIR
+  && mkdir --parents $ZK_DATADIR $ZK_DATALOGDIR $ZK_LOG_DIR \
+  && chown -R -L -h "$ZK_USER:$ZK_USER" $ZK_HOME $ZK_DATADIR $ZK_DATALOGDIR $ZK_LOG_DIR
  
 # Set working directory to home
 WORKDIR $ZK_HOME
