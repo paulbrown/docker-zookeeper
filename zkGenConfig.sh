@@ -24,15 +24,15 @@ ZK_MIN_SESSION_TIMEOUT=${ZK_MIN_SESSION_TIMEOUT:- $((ZK_TICK_TIME*2))}
 ZK_MAX_SESSION_TIMEOUT=${ZK_MAX_SESSION_TIMEOUT:- $((ZK_TICK_TIME*20))}
 ZK_SNAP_RETAIN_COUNT=${ZK_SNAP_RETAIN_COUNT:-3}
 ZK_PURGE_INTERVAL=${ZK_PURGE_INTERVAL:-0}
+ZK_PEER_TYPE=${ZK_PEER_TYPE:-"participant"}
 ZK_STATIC_CONFIG="$ZK_CONF_DIR/zoo.cfg"
 ZK_DYNAMIC_CONFIG="$ZK_CONF_DIR/zoo.cfg.dynamic"
-ZK_PEER_TYPE=${ZK_PEER_TYPE:-"participant"}
 ZOO_DATADIR_AUTOCREATE_DISABLE=1
 ID_FILE="$ZK_DATADIR/myid"
 LOGGER_PROPS_FILE="$ZK_CONF_DIR/log4j.properties"
 JAVA_ENV_FILE="$ZK_CONF_DIR/java.env"
-HOST=`hostname -s`
-DOMAIN=`hostname -d`
+HOST=$(hostname -s)
+DOMAIN=$(hostname -d)
 
 
 function print_servers() {
@@ -50,14 +50,11 @@ function validate_env() {
         exit 1
     fi
 
-    if [[ $HOST =~ (.*)-([0-9]+)$ ]]; then
+    if [[ $HOST =~ ^([A-Za-z0-9]*)(-)([0-9]+)((-.*)?)$ ]]; then
         NAME=$(echo $HOST | cut -d '-' -f 1)
         ORD=$(echo $HOST | cut -d '-' -f 2)
-        
-        #NAME=${BASH_REMATCH[1]}
-        #ORD=${BASH_REMATCH[2]}
     else
-        echo "Failed to extract ordinal from hostname $HOST"
+        echo "Failed to match valid hostname '[name]-[ordinal]' $HOST"
         exit 1
     fi
 

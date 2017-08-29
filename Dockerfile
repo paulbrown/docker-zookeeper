@@ -44,14 +44,15 @@ RUN set -o pipefail \
 COPY zkGenConfig.sh zkOK.sh zkMetrics.sh "$ZK_HOME/bin/"
 
 # Create a user for the zookeeper process and configure file system ownership 
-# for nessecary directories and symlink the distribution as a user executable
+# for nessecary directories and modify scripts as a user executable
 RUN set -o pipefail \ 
   && groupadd --gid 1000 $ZK_USER \
   && useradd --uid 1000 --gid $ZK_USER --home $ZK_HOME $ZK_USER \
   && mkdir --parents $ZK_DATADIR $ZK_DATALOGDIR $ZK_LOG_DIR \
-  && chown -R -L -h "$ZK_USER:$ZK_USER" $ZK_HOME $ZK_DATADIR $ZK_DATALOGDIR $ZK_LOG_DIR
+  && chown -R -L -h "$ZK_USER:$ZK_USER" $ZK_HOME $ZK_DATADIR $ZK_DATALOGDIR $ZK_LOG_DIR \
+  && chmod +x "$ZK_HOME/bin/zkGenConfig.sh" "$ZK_HOME/bin/zkOK.sh" "$ZK_HOME/bin/zkMetrics.sh"
  
-# Set working directory to home
+# Set working directory to zk home
 WORKDIR $ZK_HOME
 
 # Set non-root user on container start
