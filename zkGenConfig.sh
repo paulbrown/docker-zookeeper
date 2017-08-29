@@ -31,8 +31,8 @@ ZOO_DATADIR_AUTOCREATE_DISABLE=1
 ID_FILE="$ZK_DATADIR/myid"
 LOGGER_PROPS_FILE="$ZK_CONF_DIR/log4j.properties"
 JAVA_ENV_FILE="$ZK_CONF_DIR/java.env"
-HOST=$(hostname -s)
-DOMAIN=$(hostname -d)
+HOST=`hostname -s`
+DOMAIN=`hostname -d`
 
 
 function print_servers() {
