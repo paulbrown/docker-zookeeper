@@ -26,18 +26,19 @@ ZK_SNAP_RETAIN_COUNT=${ZK_SNAP_RETAIN_COUNT:-3}
 ZK_PURGE_INTERVAL=${ZK_PURGE_INTERVAL:-0}
 ZK_STATIC_CONFIG="$ZK_CONF_DIR/zoo.cfg"
 ZK_DYNAMIC_CONFIG="$ZK_CONF_DIR/zoo.cfg.dynamic"
+ZK_PEER_TYPE=${ZK_PEER_TYPE:-"participant"}
 ZOO_DATADIR_AUTOCREATE_DISABLE=1
 ID_FILE="$ZK_DATADIR/myid"
 LOGGER_PROPS_FILE="$ZK_CONF_DIR/log4j.properties"
 JAVA_ENV_FILE="$ZK_CONF_DIR/java.env"
-HOST=`hostname -s`
-DOMAIN=`hostname -d`
+HOST=$(hostname -s)
+DOMAIN=$(hostname -d)
 
 
 function print_servers() {
     for (( i=1; i<=$ZK_REPLICAS; i++ ))
     do
-      echo "server.$i=$NAME-$((i)).$DOMAIN:$ZK_SERVER_PORT:$ZK_ELECTION_PORT:participant;$ZK_CLIENT_PORT"
+      echo "server.$i=$NAME-$((i)).$DOMAIN:$ZK_SERVER_PORT:$ZK_ELECTION_PORT:$ZK_PEER_TYPE;$ZK_CLIENT_PORT"
     done
 }
 
@@ -46,12 +47,15 @@ function validate_env() {
     echo "Validating environment"
     if [ -z $ZK_REPLICAS ]; then
         echo "ZK_REPLICAS is a mandatory environment variable"
-    exit 1
+        exit 1
     fi
 
     if [[ $HOST =~ (.*)-([0-9]+)$ ]]; then
-        NAME=${BASH_REMATCH[1]}
-        ORD=${BASH_REMATCH[2]}
+        NAME=$(echo $HOST | cut -d '-' -f 1)
+        ORD=$(echo $HOST | cut -d '-' -f 2)
+        
+        #NAME=${BASH_REMATCH[1]}
+        #ORD=${BASH_REMATCH[2]}
     else
         echo "Failed to extract ordinal from hostname $HOST"
         exit 1
