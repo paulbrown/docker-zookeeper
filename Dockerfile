@@ -2,8 +2,8 @@ FROM paulbrown/base:latest
 
 ENV ZK_USER=zk \
   ZK_HOME=/zk \
-  ZK_DATADIR=/zk_data \
-  ZK_DATALOGDIR=/zk_datalog \
+  ZK_DATA_DIR=/zk_data \
+  ZK_DATALOG_DIR=/zk_datalog \
   ZK_LOG_DIR=/zk_log
 
 ARG ZK_DIST=zookeeper-3.5.3-beta
@@ -48,8 +48,8 @@ COPY zkGenConfig.sh zkOK.sh zkMetrics.sh "$ZK_HOME/bin/"
 RUN set -o pipefail \ 
   && groupadd --gid 1000 $ZK_USER \
   && useradd --uid 1000 --gid $ZK_USER --home $ZK_HOME $ZK_USER \
-  && mkdir --parents $ZK_DATADIR $ZK_DATALOGDIR $ZK_LOG_DIR \
-  && chown -R -L -h "$ZK_USER:$ZK_USER" $ZK_HOME $ZK_DATADIR $ZK_DATALOGDIR $ZK_LOG_DIR \
+  && mkdir --parents $ZK_DATA_DIR $ZK_DATALOG_DIR $ZK_LOG_DIR \
+  && chown -R -L -h "$ZK_USER:$ZK_USER" $ZK_HOME $ZK_DATA_DIR $ZK_DATALOG_DIR $ZK_LOG_DIR \
   && chmod +x "$ZK_HOME/bin/zkGenConfig.sh" "$ZK_HOME/bin/zkOK.sh" "$ZK_HOME/bin/zkMetrics.sh"
  
 # Set working directory to zk home
