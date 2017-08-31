@@ -88,8 +88,8 @@ function create_config() {
     echo "standaloneEnabled=false" >> $ZK_STATIC_CONFIG
     echo "4lw.commands.whitelist=ruok, imok, mntr" >> $ZK_STATIC_CONFIG  
     echo "zookeeper.datadir.autocreate=$ZK_DATADIR_AUTOCREATE" >> $ZK_STATIC_CONFIG  
-    echo "dataDir=$ZK_DATA_DIR" >> $ZK_STATIC_CONFIG
-    echo "dataLogDir=$ZK_DATALOG_DIR" >> $ZK_STATIC_CONFIG
+    echo "dataDir=$ZK_HOME$ZK_DATA_DIR" >> $ZK_STATIC_CONFIG
+    echo "dataLogDir=$ZK_HOME$ZK_DATALOG_DIR" >> $ZK_STATIC_CONFIG
     echo "tickTime=$ZK_TICK_TIME" >> $ZK_STATIC_CONFIG
     echo "initLimit=$ZK_INIT_LIMIT" >> $ZK_STATIC_CONFIG
     echo "syncLimit=$ZK_SYNC_LIMIT" >> $ZK_STATIC_CONFIG
@@ -104,17 +104,17 @@ function create_config() {
     print_servers >> $ZK_DYNAMIC_CONFIG
     echo "Wrote ZooKeeper dynamic configuration file to $ZK_DYNAMIC_CONFIG"
     
-    if [ ! -d $ZK_DATA_DIR/version-2  ]; then
-        mkdir -p $ZK_DATA_DIR/version-2
-        echo "Created ZooKeeper data directory $ZK_DATA_DIR/version-2"
+    if [ ! -d $ZK_HOME$ZK_DATA_DIR/version-2  ]; then
+        mkdir -p $ZK_HOME$ZK_DATA_DIR/version-2
+        echo "Created ZooKeeper data directory $ZK_HOME$ZK_DATA_DIR/version-2"
     fi
 
-    if [ ! -d $ZK_DATALOG_DIR/version-2  ]; then
-        mkdir -p $ZK_DATALOG_DIR/version-2
-        echo "Created ZooKeeper log directory $ZK_DATALOG_DIR/version-2"
+    if [ ! -d $ZK_HOME$ZK_DATALOG_DIR/version-2  ]; then
+        mkdir -p $ZK_HOME$ZK_DATALOG_DIR/version-2
+        echo "Created ZooKeeper log directory $ZK_HOME$ZK_DATALOG_DIR/version-2"
     fi    
     
-    if [ ! -f $ID_FILE ]; then
+    if [ ! -f $ZK_HOME$ID_FILE ]; then
         echo $MY_ID >> $ID_FILE
         echo "Wrote ZooKeeper id file in $ID_FILE"
     fi
@@ -136,7 +136,7 @@ function create_log4j_props() {
 
 function create_java_env() {
     rm -f $JAVA_ENV_FILE
-    echo "ZOO_LOG_DIR=$ZK_LOG_DIR" >> $JAVA_ENV_FILE
+    echo "ZOO_LOG_DIR=$ZK_HOME$ZK_LOG_DIR" >> $JAVA_ENV_FILE
     echo "JVMFLAGS=\"-Xmx$ZK_HEAP_SIZE -Xms$ZK_HEAP_SIZE\"" >> $JAVA_ENV_FILE
     echo "Wrote JVM configuration to $JAVA_ENV_FILE"
 }

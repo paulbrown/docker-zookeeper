@@ -44,11 +44,11 @@ COPY zkGenConfig.sh zkOK.sh zkMetrics.sh "/opt/$ZK_DIST/bin/"
 
 # Create a user for the zookeeper process and configure file system ownership 
 # for nessecary directories and modify scripts as a user executable
-RUN set -o pipefail \
+RUN set -x pipefail \
   && mkdir --parents $ZK_DATA_DIR $ZK_DATALOG_DIR $ZK_LOG_DIR \
   && groupadd --gid 1000 $ZK_USER \
   && useradd --uid 1000 --gid $ZK_USER --home $ZK_HOME $ZK_USER \
-  && ln --symbolic /opt/$ZK_DIST/* $ZK_DATA_DIR $ZK_DATALOG_DIR $ZK_LOG_DIR $ZK_HOME \
+  && ln -s -t $ZK_HOME /opt/$ZK_DIST/* $ZK_DATA_DIR $ZK_DATALOG_DIR $ZK_LOG_DIR \
   && chown -R -L "$ZK_USER:$ZK_USER" $ZK_HOME \
   && chmod +x "$ZK_HOME/bin/zkGenConfig.sh" "$ZK_HOME/bin/zkOK.sh" "$ZK_HOME/bin/zkMetrics.sh"
   
