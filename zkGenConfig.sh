@@ -109,14 +109,14 @@ function create_config() {
         echo "Created ZooKeeper data directory $ZK_HOME$ZK_DATA_DIR/version-2"
     fi
 
-    if [ ! -d $ZK_HOME$ZK_DATALOG_DIR/version-2  ]; then
-        mkdir -p $ZK_HOME$ZK_DATALOG_DIR/version-2
-        echo "Created ZooKeeper log directory $ZK_HOME$ZK_DATALOG_DIR/version-2"
-    fi    
-    
     if [ ! -f $ZK_HOME$ID_FILE ]; then
         echo $MY_ID >> $ID_FILE
         echo "Wrote ZooKeeper id file in $ID_FILE"
+    fi
+    
+    if [ ! -d $ZK_HOME$ZK_DATALOG_DIR/version-2  ]; then
+        mkdir -p $ZK_HOME$ZK_DATALOG_DIR/version-2
+        echo "Created ZooKeeper log directory $ZK_HOME$ZK_DATALOG_DIR/version-2"
     fi
 }
 
