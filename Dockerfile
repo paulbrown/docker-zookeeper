@@ -8,7 +8,7 @@ ENV ZK_USER=zk \
 
 ARG ZK_DIST=zookeeper-3.5.3-beta
 
-RUN set -o pipefail \
+RUN set -x pipefail \
   && yum update --assumeyes \
   && yum install --assumeyes java-1.8.0-openjdk-headless nmap-ncat wget \
   && wget --quiet "http://www.apache.org/dist/zookeeper/$ZK_DIST/$ZK_DIST.tar.gz" \
@@ -39,7 +39,7 @@ RUN set -o pipefail \
   && yum erase --assumeyes wget \
   && yum clean all
 
-#Copy configuration generator and setup scripts to bin and make executable
+# Copy configuration generator and setup scripts to bin and make executable
 COPY zkGenConfig.sh zkOK.sh zkMetrics.sh "/opt/$ZK_DIST/bin/"
 
 # Create a user for the zookeeper process and configure file system ownership 
